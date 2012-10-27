@@ -6,6 +6,7 @@ var alpha : float;
 var angle : float;
 var cameraAlpha : float;
 var minCameraDistance : float;
+var hCameraRotationMultiplier : float;
 var maxCameraDistance : float;
 var mainCamera : Transform;
 var speed : float; // m/s
@@ -52,7 +53,7 @@ function Update () {
   controller.SimpleMove(velocity);
   mainCamera.transform.LookAt(transform);
   var rotation : Quaternion =
-      Quaternion.AngleAxis(Input.GetAxis(HORIZONTAL_HAT) * angle * 1.5, mainCamera.up) *
+      Quaternion.AngleAxis(Input.GetAxis(HORIZONTAL_HAT) * angle * hCameraRotationMultiplier, mainCamera.up) *
           Quaternion.AngleAxis(Input.GetAxis(VERTICAL_HAT) * angle, mainCamera.right);
   orientation = Quaternion.Lerp(orientation, rotation, alpha);
   mainCamera.rotation = orientation * mainCamera.rotation;
