@@ -11,6 +11,16 @@ var speed : float; // m/s
 
 private var controller : CharacterController;
 
+#if UNITY_STANDALONE_WIN
+private static var HORIZONTAL_HAT : String = "HorizontalHat";
+private static var VERTICAL_HAT : String = "VerticalHat";
+#endif
+
+#if UNITY_STANDALONE_OSX
+private static var HORIZONTAL_HAT : String = "HorizontalHatMac";
+private static var VERTICAL_HAT : String = "VerticalHatMac";
+#endif
+
 function Start () {
   controller = GetComponent(CharacterController);
 }
@@ -31,8 +41,8 @@ function FixedUpdate () {
   var dr : Vector3 = Input.GetAxis("Horizontal") * mainCamera.right;
   var df : Vector3 = Input.GetAxis("Vertical") * directionToPlayer;
   var rotation : Quaternion =
-      Quaternion.AngleAxis(Input.GetAxis("VerticalHat") * angle, mainCamera.right) *
-          Quaternion.AngleAxis(Input.GetAxis("HorizontalHat") * angle * 1.5, mainCamera.up);
+      Quaternion.AngleAxis(Input.GetAxis(VERTICAL_HAT) * angle, mainCamera.right) *
+          Quaternion.AngleAxis(Input.GetAxis(HORIZONTAL_HAT) * angle * 1.5, mainCamera.up);
   mainCamera.rotation = rotation * mainCamera.rotation;
   var velocity : Vector3 = speed * Vector3.ClampMagnitude(dr + df, 1);
   if (velocity.sqrMagnitude > 0.25) {
