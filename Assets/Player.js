@@ -11,9 +11,11 @@ var maxCameraDistance : float;
 var mainCamera : Transform;
 var speed : float; // m/s
 var strafeThresholdVelocity : float; // m/s
+var velocityAlpha : float;
 
 private var controller : CharacterController;
 private var orientation : Quaternion;
+private var velocity : Vector3;
 
 #if UNITY_STANDALONE_WIN
 private static var HORIZONTAL_HAT : String = "HorizontalHatXbox360";
@@ -28,6 +30,7 @@ private static var VERTICAL_HAT : String = "VerticalHatPs3";
 function Start () {
   controller = GetComponent(CharacterController);
   orientation = Quaternion.identity;
+  velocity = Vector3.zero;
 }
 
 function Update () {
@@ -45,11 +48,12 @@ function Update () {
   }
   var dr : Vector3 = Input.GetAxis("Horizontal") * mainCamera.right;
   var df : Vector3 = Input.GetAxis("Vertical") * directionToPlayer.normalized;
-  var velocity : Vector3 = speed * Vector3.ClampMagnitude(dr + df, 1);
-  if (velocity.sqrMagnitude > strafeThresholdVelocity) {
+  var newVelocity : Vector3 = speed * Vector3.ClampMagnitude(dr + df, 1);
+  if (newVelocity.sqrMagnitude > strafeThresholdVelocity) {
     transform.rotation = Quaternion.Lerp(
         transform.rotation, Quaternion.FromToRotation(Vector3.forward, velocity), alpha);
   }
+  velocity = Vector3.Lerp(velocity, newVelocity, velocityAlpha);
   controller.SimpleMove(velocity);
   mainCamera.transform.LookAt(transform);
   var rotation : Quaternion = Quaternion.AngleAxis(
@@ -57,6 +61,6 @@ function Update () {
           Input.GetAxis(HORIZONTAL_HAT) * angle * hCameraRotationMultiplier, mainCamera.up) *
       Quaternion.AngleAxis(-Input.GetAxis("Vertical") / 4.0 * angle + 
           Input.GetAxis(VERTICAL_HAT) * angle, mainCamera.right);
-  orientation = Quaternion.Lerp(orientation, rotation, alpha);
+  orientation = Quaternion.Lerp(orientation, rotation, cameraAlpha);
   mainCamera.rotation = orientation * mainCamera.rotation;
 }
