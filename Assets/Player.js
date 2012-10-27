@@ -8,6 +8,7 @@ var minCameraDistance : float;
 var maxCameraDistance : float;
 var mainCamera : Transform;
 var speed : float; // m/s
+var strafeThresholdVelocity : float; // m/s
 
 private var controller : CharacterController;
 
@@ -39,13 +40,13 @@ function FixedUpdate () {
     mainCamera.transform.position += correction;
   }
   var dr : Vector3 = Input.GetAxis("Horizontal") * mainCamera.right;
-  var df : Vector3 = Input.GetAxis("Vertical") * directionToPlayer;
+  var df : Vector3 = Input.GetAxis("Vertical") * directionToPlayer.normalized;
   var rotation : Quaternion =
       Quaternion.AngleAxis(Input.GetAxis(VERTICAL_HAT) * angle, mainCamera.right) *
           Quaternion.AngleAxis(Input.GetAxis(HORIZONTAL_HAT) * angle * 1.5, mainCamera.up);
   mainCamera.rotation = rotation * mainCamera.rotation;
   var velocity : Vector3 = speed * Vector3.ClampMagnitude(dr + df, 1);
-  if (velocity.sqrMagnitude > 0.25) {
+  if (velocity.sqrMagnitude > strafeThresholdVelocity) {
     transform.rotation = Quaternion.Lerp(
         transform.rotation, Quaternion.FromToRotation(Vector3.forward, velocity), alpha);
   }
