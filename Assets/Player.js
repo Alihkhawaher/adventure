@@ -14,6 +14,7 @@ var strafeThresholdVelocity : float; // m/s
 var velocityAlpha : float;
 
 private var controller : CharacterController;
+private var correction : Vector3;
 private var orientation : Quaternion;
 private var velocity : Vector3;
 
@@ -29,6 +30,7 @@ private static var VERTICAL_HAT : String = "VerticalHatPs3";
 
 function Start () {
   controller = GetComponent(CharacterController);
+  correction = Vector3.zero;
   orientation = Quaternion.identity;
   velocity = Vector3.zero;
 }
@@ -38,14 +40,14 @@ function Update () {
   var directionToPlayer : Vector3 = 
       Vector3.Scale(XZ, transform.position) - Vector3.Scale(XZ, mainCamera.position);
   var cameraDistance : float = directionToPlayer.magnitude;
-  var correction : Vector3;
+  var newCorrection : Vector3 = Vector3.zero;
   if (cameraDistance > maxCameraDistance) {
-    correction = directionToPlayer.normalized * (cameraDistance - maxCameraDistance);
-    mainCamera.transform.position += correction;
+    newCorrection = directionToPlayer.normalized * (cameraDistance - maxCameraDistance);
   } else if (cameraDistance < minCameraDistance) {
-    correction = directionToPlayer.normalized * (cameraDistance - minCameraDistance);
-    mainCamera.transform.position += correction;
+    newCorrection = directionToPlayer.normalized * (cameraDistance - minCameraDistance);
   }
+  correction = Vector3.Lerp(correction, newCorrection, 0.05);
+  mainCamera.transform.position += correction;
   var dr : Vector3 = Input.GetAxis("Horizontal") * mainCamera.right;
   var df : Vector3 = Input.GetAxis("Vertical") * directionToPlayer.normalized;
   var newVelocity : Vector3 = speed * Vector3.ClampMagnitude(dr + df, 1);
