@@ -4,6 +4,7 @@ private static var XZ : Vector3 = Vector3(1, 0, 1);
 
 var alpha : float;
 var angle : float;
+var cameraAlpha : float;
 var minCameraDistance : float;
 var maxCameraDistance : float;
 var mainCamera : Transform;
@@ -11,6 +12,7 @@ var speed : float; // m/s
 var strafeThresholdVelocity : float; // m/s
 
 private var controller : CharacterController;
+private var orientation : Quaternion;
 
 #if UNITY_STANDALONE_WIN
 private static var HORIZONTAL_HAT : String = "HorizontalHat";
@@ -24,6 +26,7 @@ private static var VERTICAL_HAT : String = "VerticalHatMac";
 
 function Start () {
   controller = GetComponent(CharacterController);
+  orientation = Quaternion.identity;
 }
 
 function FixedUpdate () {
@@ -44,7 +47,8 @@ function FixedUpdate () {
   var rotation : Quaternion =
       Quaternion.AngleAxis(Input.GetAxis(HORIZONTAL_HAT) * angle * 1.5, mainCamera.up) *
           Quaternion.AngleAxis(Input.GetAxis(VERTICAL_HAT) * angle, mainCamera.right);
-  mainCamera.rotation = rotation * mainCamera.rotation;
+  orientation = Quaternion.Lerp(orientation, rotation, alpha);
+  mainCamera.rotation = orientation * mainCamera.rotation;
   var velocity : Vector3 = speed * Vector3.ClampMagnitude(dr + df, 1);
   if (velocity.sqrMagnitude > strafeThresholdVelocity) {
     transform.rotation = Quaternion.Lerp(
