@@ -2,6 +2,7 @@
 
 private static var XZ : Vector3 = Vector3(1, 0, 1);
 
+var adultHeight : float;
 var alpha : float;
 var angle : float;
 var cameraAlpha : float;
@@ -46,7 +47,11 @@ function Update () {
   } else if (cameraDistance < minCameraDistance) {
     newCorrection = directionToPlayer.normalized * (cameraDistance - minCameraDistance);
   }
-  correction = Vector3.Lerp(correction, newCorrection, 0.05);
+  var hit : RaycastHit;
+  if (Physics.Raycast(mainCamera.position, -Vector3.up, hit)) {
+    newCorrection.y = hit.point.y - mainCamera.position.y + adultHeight;
+  }
+  correction = Vector3.Lerp(correction, newCorrection, cameraAlpha);
   mainCamera.transform.position += correction;
   var dr : Vector3 = Input.GetAxis("Horizontal") * mainCamera.right;
   var df : Vector3 = Input.GetAxis("Vertical") * directionToPlayer.normalized;
