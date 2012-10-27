@@ -2,6 +2,7 @@
 
 private static var XZ : Vector3 = Vector3(1, 0, 1);
 
+var alpha : float;
 var angle : float;
 var minCameraDistance : float;
 var maxCameraDistance : float;
@@ -34,5 +35,9 @@ function FixedUpdate () {
           Quaternion.AngleAxis(Input.GetAxis("HorizontalHat") * angle * 1.5, mainCamera.up);
   mainCamera.rotation = rotation * mainCamera.rotation;
   var velocity : Vector3 = speed * Vector3.ClampMagnitude(dr + df, 1);
+  if (velocity.sqrMagnitude > 0.25) {
+    transform.rotation = Quaternion.Lerp(
+        transform.rotation, Quaternion.FromToRotation(Vector3.forward, velocity), alpha);
+  }
   controller.SimpleMove(velocity);
 }
