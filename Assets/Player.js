@@ -29,7 +29,7 @@ function Start () {
   orientation = Quaternion.identity;
 }
 
-function FixedUpdate () {
+function Update () {
   mainCamera.transform.LookAt(transform);
   var directionToPlayer : Vector3 = 
       Vector3.Scale(XZ, transform.position) - Vector3.Scale(XZ, mainCamera.position);
@@ -44,15 +44,16 @@ function FixedUpdate () {
   }
   var dr : Vector3 = Input.GetAxis("Horizontal") * mainCamera.right;
   var df : Vector3 = Input.GetAxis("Vertical") * directionToPlayer.normalized;
-  var rotation : Quaternion =
-      Quaternion.AngleAxis(Input.GetAxis(HORIZONTAL_HAT) * angle * 1.5, mainCamera.up) *
-          Quaternion.AngleAxis(Input.GetAxis(VERTICAL_HAT) * angle, mainCamera.right);
-  orientation = Quaternion.Lerp(orientation, rotation, alpha);
-  mainCamera.rotation = orientation * mainCamera.rotation;
   var velocity : Vector3 = speed * Vector3.ClampMagnitude(dr + df, 1);
   if (velocity.sqrMagnitude > strafeThresholdVelocity) {
     transform.rotation = Quaternion.Lerp(
         transform.rotation, Quaternion.FromToRotation(Vector3.forward, velocity), alpha);
   }
   controller.SimpleMove(velocity);
+  mainCamera.transform.LookAt(transform);
+  var rotation : Quaternion =
+      Quaternion.AngleAxis(Input.GetAxis(HORIZONTAL_HAT) * angle * 1.5, mainCamera.up) *
+          Quaternion.AngleAxis(Input.GetAxis(VERTICAL_HAT) * angle, mainCamera.right);
+  orientation = Quaternion.Lerp(orientation, rotation, alpha);
+  mainCamera.rotation = orientation * mainCamera.rotation;
 }
