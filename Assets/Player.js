@@ -42,8 +42,8 @@ function FixedUpdate () {
   var dr : Vector3 = Input.GetAxis("Horizontal") * mainCamera.right;
   var df : Vector3 = Input.GetAxis("Vertical") * directionToPlayer.normalized;
   var rotation : Quaternion =
-      Quaternion.AngleAxis(Input.GetAxis(VERTICAL_HAT) * angle, mainCamera.right) *
-          Quaternion.AngleAxis(Input.GetAxis(HORIZONTAL_HAT) * angle * 1.5, mainCamera.up);
+      Quaternion.AngleAxis(Input.GetAxis(HORIZONTAL_HAT) * angle * 1.5, mainCamera.up) *
+          Quaternion.AngleAxis(Input.GetAxis(VERTICAL_HAT) * angle, mainCamera.right);
   mainCamera.rotation = rotation * mainCamera.rotation;
   var velocity : Vector3 = speed * Vector3.ClampMagnitude(dr + df, 1);
   if (velocity.sqrMagnitude > strafeThresholdVelocity) {
