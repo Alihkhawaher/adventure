@@ -16,13 +16,13 @@ private var controller : CharacterController;
 private var orientation : Quaternion;
 
 #if UNITY_STANDALONE_WIN
-private static var HORIZONTAL_HAT : String = "HorizontalHat";
-private static var VERTICAL_HAT : String = "VerticalHat";
+private static var HORIZONTAL_HAT : String = "HorizontalHatXbox360";
+private static var VERTICAL_HAT : String = "VerticalHatXbox360";
 #endif
 
 #if UNITY_STANDALONE_OSX
-private static var HORIZONTAL_HAT : String = "HorizontalHatMac";
-private static var VERTICAL_HAT : String = "VerticalHatMac";
+private static var HORIZONTAL_HAT : String = "HorizontalHatPs3";
+private static var VERTICAL_HAT : String = "VerticalHatPs3";
 #endif
 
 function Start () {
@@ -52,9 +52,11 @@ function Update () {
   }
   controller.SimpleMove(velocity);
   mainCamera.transform.LookAt(transform);
-  var rotation : Quaternion =
-      Quaternion.AngleAxis(Input.GetAxis(HORIZONTAL_HAT) * angle * hCameraRotationMultiplier, mainCamera.up) *
-          Quaternion.AngleAxis(Input.GetAxis(VERTICAL_HAT) * angle, mainCamera.right);
+  var rotation : Quaternion = Quaternion.AngleAxis(
+      Input.GetAxis("Horizontal") / 3.0 * angle * hCameraRotationMultiplier +
+          Input.GetAxis(HORIZONTAL_HAT) * angle * hCameraRotationMultiplier, mainCamera.up) *
+      Quaternion.AngleAxis(-Input.GetAxis("Vertical") / 4.0 * angle + 
+          Input.GetAxis(VERTICAL_HAT) * angle, mainCamera.right);
   orientation = Quaternion.Lerp(orientation, rotation, alpha);
   mainCamera.rotation = orientation * mainCamera.rotation;
 }
