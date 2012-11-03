@@ -13,6 +13,7 @@ var mainCamera : Camera;
 var speed : float; // m/s
 var strafeThresholdVelocity : float; // m/s
 var velocityAlpha : float;
+var unzoomedFieldOfView : float;
 var zoomedFieldOfView : float;
 
 private var controller : CharacterController;
@@ -76,7 +77,7 @@ function Update () {
           Input.GetAxis(VERTICAL_HAT) * angle, mainCamera.transform.right);
   orientation = Quaternion.Lerp(orientation, rotation, cameraAlpha);
   mainCamera.transform.rotation = orientation * mainCamera.transform.rotation;
-  mainCamera.fieldOfView = Mathf.Lerp(mainCamera.fieldOfView,
-      normalFieldOfView + Mathf.Clamp(Input.GetAxis(ZOOM), -1, 0) *
-          zoomedFieldOfView, cameraAlpha);
+  mainCamera.fieldOfView = Mathf.Lerp(mainCamera.fieldOfView, normalFieldOfView +
+      Mathf.Clamp(Input.GetAxis(ZOOM), -1, 0) * zoomedFieldOfView +
+      Mathf.Clamp(Input.GetAxis(ZOOM), 0, 1) * unzoomedFieldOfView, cameraAlpha);
 }
