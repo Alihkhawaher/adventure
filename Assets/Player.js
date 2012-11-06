@@ -122,6 +122,12 @@ function Update () {
       center.position = ray.GetPoint(1000.0);
     }
     cachedHeadRotation = head.rotation;
+    if (Vector3.Dot(transform.forward, center.position - head.position) < 0.0) {
+      var dir : Vector3 = center.position - head.position;
+      var newDir : Vector3 = dir - Vector3.Dot(dir, transform.forward) /
+          Vector3.Dot(transform.forward, transform.forward) * transform.forward;
+      center.position = head.position + newDir;
+    }
     head.LookAt(center);
     headOrientation = Quaternion.Lerp(headOrientation,
         head.rotation, cameraAlpha);
