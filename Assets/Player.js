@@ -6,8 +6,10 @@ var adultHeight : float;
 var alpha : float;
 var angle : float;
 var cameraAlpha : float;
+var center : Transform;
 var minCameraDistance : float;
 var hCameraRotationMultiplier : float;
+var head : Transform;
 var maxCameraDistance : float;
 var mainCamera : Camera;
 var speed : float; // m/s
@@ -20,6 +22,7 @@ private var controller : CharacterController;
 private var correction : Vector3;
 private var normalFieldOfView : float;
 private var orientation : Quaternion;
+private var headOrientation : Quaternion;
 private var velocity : Vector3;
 private var pointer : Vector2;
 
@@ -40,6 +43,7 @@ function Start () {
   correction = Vector3.zero;
   normalFieldOfView = mainCamera.fieldOfView;
   orientation = Quaternion.identity;
+  headOrientation = Quaternion.identity;
   velocity = Vector3.zero;
   pointer = Vector2.zero;
 }
@@ -105,6 +109,28 @@ function Update () {
           Mathf.Clamp(Input.GetAxis(ZOOM), -1, 0) * zoomedFieldOfView +
               Mathf.Clamp(Input.GetAxis(ZOOM), 0, 1) * unzoomedFieldOfView,
                   cameraAlpha);
+  if (Vector2.Distance(pointer, Vector2.zero) > 0.05) {
+    var point : Vector2 = Vector2.Scale(
+        new Vector2(Screen.width, -Screen.height) / 2.0,
+        new Vector2(1.0, -1.0) + new Vector2(
+      Input.GetAxis(HORIZONTAL_HAT), Input.GetAxis(VERTICAL_HAT)));
+    var ray : Ray = mainCamera.ScreenPointToRay(point);
+    if (Physics.Raycast(ray, hit)) {
+      center.position = hit.point;
+    } else {
+      center.position = ray.GetPoint(1000.0);
+    }
+    var oldHeadRotation : Quaternion = head.rotation;
+    head.LookAt(center);
+    headOrientation = Quaternion.Lerp(headOrientation,
+        head.rotation, cameraAlpha);
+    head.rotation = oldHeadRotation;
+  } else {
+    headOrientation = Quaternion.Lerp(
+        headOrientation, Quaternion.FromToRotation(
+            Vector3.forward, velocity), cameraAlpha);
+  }
+  head.rotation = headOrientation;
 }
 
 //IVZ TEST
