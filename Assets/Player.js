@@ -21,6 +21,7 @@ private var correction : Vector3;
 private var normalFieldOfView : float;
 private var orientation : Quaternion;
 private var velocity : Vector3;
+private var pointer : Vector2;
 
 #if UNITY_STANDALONE_WIN
 private static var HORIZONTAL_HAT : String = 'HorizontalHatXbox360';
@@ -40,6 +41,23 @@ function Start () {
   normalFieldOfView = mainCamera.fieldOfView;
   orientation = Quaternion.identity;
   velocity = Vector3.zero;
+  pointer = Vector2.zero;
+}
+
+function OnGUI() {
+  var style : GUIStyle = new GUIStyle();
+  var textStyle : GUIStyleState = new GUIStyleState();
+  style.fontSize = 32;
+  textStyle = new GUIStyleState();
+  textStyle.textColor = Color.white;
+  style.normal = textStyle;
+  var newPointer : Vector2 = new Vector2(
+      Input.GetAxis(HORIZONTAL_HAT), Input.GetAxis(VERTICAL_HAT));
+  pointer = Vector2.Lerp(pointer, newPointer, cameraAlpha);
+  if (Vector2.Distance(pointer, Vector2.zero) > 0.05) {
+    GUI.Label(new Rect(Screen.width / 2.0 * (1 + pointer.x),
+        Screen.height / 2.0 * (1 + pointer.y), 50, 50), "◎", style);
+  }
 }
 
 function Update () {
