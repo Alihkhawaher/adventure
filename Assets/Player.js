@@ -109,6 +109,7 @@ function Update () {
           Mathf.Clamp(Input.GetAxis(ZOOM), -1, 0) * zoomedFieldOfView +
               Mathf.Clamp(Input.GetAxis(ZOOM), 0, 1) * unzoomedFieldOfView,
                   cameraAlpha);
+  var cachedHeadRotation : Quaternion;
   if (Vector2.Distance(pointer, Vector2.zero) > 0.05) {
     var point : Vector2 = Vector2.Scale(
         new Vector2(Screen.width, -Screen.height) / 2.0,
@@ -120,11 +121,17 @@ function Update () {
     } else {
       center.position = ray.GetPoint(1000.0);
     }
-    var oldHeadRotation : Quaternion = head.rotation;
+    cachedHeadRotation = head.rotation;
     head.LookAt(center);
     headOrientation = Quaternion.Lerp(headOrientation,
         head.rotation, cameraAlpha);
-    head.rotation = oldHeadRotation;
+    head.rotation = cachedHeadRotation;
+  } else if (Vector3.Dot(mainCamera.transform.forward, transform.forward) < 0.0) {
+    cachedHeadRotation = head.rotation;
+    head.LookAt(mainCamera.transform);
+    headOrientation = Quaternion.Lerp(
+        headOrientation, head.rotation, cameraAlpha);
+    head.rotation = cachedHeadRotation;
   } else {
     headOrientation = Quaternion.Lerp(
         headOrientation, Quaternion.FromToRotation(
