@@ -1,8 +1,9 @@
 fileFormatVersion: 2
-guid: 43f0cb16e72289240a0e72ddecb07212
+guid: cef0c824ee3954541a38d39af3ccf5e0
 ModelImporter:
   fileIDToRecycleName:
-    4300000: Plane
+    4300000: houseA_obj_houseA_houseA_HouseAMat_houseA_jpg
+    4300002: houseA_obj_houseA_houseA_HouseAMat
     7400000: Default Take //// house
   serializedVersion: 10
   materials:
@@ -41,6 +42,16 @@ ModelImporter:
     //RootNode:
       data:
         first: 1
+        second: a2860100
+      data:
+        first: 4
+        second: 821a0600
+      data:
+        first: 111
+        second: 605fa900
+    houseA_obj_houseA_houseA_HouseAMat:
+      data:
+        first: 1
         second: a0860100
       data:
         first: 4
@@ -51,6 +62,16 @@ ModelImporter:
       data:
         first: 33
         second: a05a3200
+    houseA_obj_houseA_houseA_HouseAMat_houseA_jpg:
       data:
-        first: 111
-        second: 605fa900
+        first: 1
+        second: a4860100
+      data:
+        first: 4
+        second: 841a0600
+      data:
+        first: 23
+        second: 62182300
+      data:
+        first: 33
+        second: a25a3200
