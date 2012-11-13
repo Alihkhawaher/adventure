@@ -1,6 +1,8 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2008
 
+Project("{7CB4872D-4140-5353-9D11-F7C1270EAFDC}") = "adventure", "Assembly-UnityScript-firstpass.unityproj", "{7657E22B-9021-EF96-34FF-60A736AA1B8C}"
+EndProject
 Project("{7CB4872D-4140-5353-9D11-F7C1270EAFDC}") = "adventure", "Assembly-UnityScript.unityproj", "{4712E294-0167-08A9-51FD-1A1AE6ABE7EB}"
 EndProject
 Global
@@ -9,6 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7657E22B-9021-EF96-34FF-60A736AA1B8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7657E22B-9021-EF96-34FF-60A736AA1B8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7657E22B-9021-EF96-34FF-60A736AA1B8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7657E22B-9021-EF96-34FF-60A736AA1B8C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4712E294-0167-08A9-51FD-1A1AE6ABE7EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4712E294-0167-08A9-51FD-1A1AE6ABE7EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4712E294-0167-08A9-51FD-1A1AE6ABE7EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -17,7 +23,7 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-													GlobalSection(MonoDevelopProperties) = preSolution
+														GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Assembly-UnityScript.unityproj
 		Policies = $0
 		$0.TextStylePolicy = $1
