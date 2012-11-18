@@ -64,7 +64,7 @@ function OnGUI() {
   }
 }
 
-function Update () {
+function FixedUpdate () {
   mainCamera.transform.LookAt(transform);
   var directionToPlayer : Vector3 = 
       Vector3.Scale(XZ, transform.position) -
