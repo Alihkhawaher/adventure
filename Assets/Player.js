@@ -7,6 +7,7 @@ var alpha : float;
 var angle : float;
 var cameraAlpha : float;
 var center : Transform;
+var childLookDistance : float;
 var minCameraDistance : float;
 var hCameraRotationMultiplier : float;
 var head : Transform;
@@ -29,6 +30,7 @@ private var orientation : Quaternion;
 private var headOrientation : Quaternion;
 private var velocity : Vector3;
 private var pointer : Vector2;
+private var toys : Array;
 
 #if UNITY_STANDALONE_WIN
 private static var HORIZONTAL_HAT : String = 'HorizontalHatXbox360';
@@ -50,6 +52,7 @@ function Start () {
   headOrientation = Quaternion.identity;
   velocity = Vector3.zero;
   pointer = Vector2.zero;
+  toys = [toyBuddha, toyBunny, toyDragon, toyMonkey];
 }
 
 function OnGUI() {
@@ -119,6 +122,9 @@ function FixedUpdate () {
               Mathf.Clamp(Input.GetAxis(ZOOM), 0, 1) * unzoomedFieldOfView,
                   cameraAlpha);
   var cachedHeadRotation : Quaternion;
+  var dir : Vector3;
+  var newDir : Vector3;
+  // If player is looking around:
   if (Vector2.Distance(pointer, Vector2.zero) > 0.05) {
     var point : Vector2 = Vector2.Scale(
         new Vector2(Screen.width, -Screen.height) / 2.0,
@@ -132,8 +138,8 @@ function FixedUpdate () {
     }
     cachedHeadRotation = head.rotation;
     if (Vector3.Dot(transform.forward, center.position - head.position) < 0.0) {
-      var dir : Vector3 = center.position - head.position;
-      var newDir : Vector3 = dir - Vector3.Dot(dir, transform.forward) /
+      dir = center.position - head.position;
+      newDir = dir - Vector3.Dot(dir, transform.forward) /
           Vector3.Dot(transform.forward, transform.forward) * transform.forward;
       center.position = head.position + newDir;
     }
@@ -141,16 +147,47 @@ function FixedUpdate () {
     headOrientation = Quaternion.Lerp(headOrientation,
         head.rotation, cameraAlpha);
     head.rotation = cachedHeadRotation;
-  } else if (Vector3.Dot(mainCamera.transform.forward, transform.forward) < 0.0) {
+  } else if (Vector3.Distance(
+      mainCamera.transform.position, transform.position) < childLookDistance
+      && Vector3.Dot(mainCamera.transform.forward, transform.forward) < 0.0) {
+    // If avatar is facing camera:
     cachedHeadRotation = head.rotation;
     head.LookAt(mainCamera.transform);
     headOrientation = Quaternion.Lerp(
         headOrientation, head.rotation, cameraAlpha);
     head.rotation = cachedHeadRotation;
   } else {
-    headOrientation = Quaternion.Lerp(
-        headOrientation, Quaternion.FromToRotation(
-            Vector3.forward, velocity), cameraAlpha);
+    // If closest toy is within 5 meters:
+    var closestToy : Transform = null;
+    var closestDistance : float = Mathf.Infinity;
+    for (var i = 0; i < toys.length; ++i) {
+      var currentToy : Transform = toys[i];
+      var currentDistance : float = Vector3.Distance(
+          currentToy.position, transform.position);
+      if (currentDistance < closestDistance) {
+        closestDistance = currentDistance;
+        closestToy = currentToy;
+      }
+    }
+    if (closestDistance < childLookDistance &&
+        Vector3.Dot(transform.forward, (transform.position - closestToy.position).normalized) < 0.0) {
+      center.position = closestToy.position;
+      cachedHeadRotation = head.rotation;
+      if (Vector3.Dot(transform.forward, center.position - head.position) < 0.0) {
+        dir = center.position - head.position;
+        newDir = dir - Vector3.Dot(dir, transform.forward) /
+            Vector3.Dot(transform.forward, transform.forward) * transform.forward;
+        center.position = head.position + newDir;
+      }
+      head.LookAt(center);
+      headOrientation = Quaternion.Lerp(headOrientation,
+          head.rotation, cameraAlpha);
+      head.rotation = cachedHeadRotation;
+    } else {
+      headOrientation = Quaternion.Lerp(
+          headOrientation, Quaternion.FromToRotation(
+              Vector3.forward, velocity), cameraAlpha);
+    }
   }
   head.rotation = headOrientation;
 }
