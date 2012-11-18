@@ -14,8 +14,12 @@ var maxCameraDistance : float;
 var mainCamera : Camera;
 var speed : float; // m/s
 var strafeThresholdVelocity : float; // m/s
-var velocityAlpha : float;
+var toyBuddha : Transform;
+var toyBunny : Transform;
+var toyDragon : Transform;
+var toyMonkey : Transform;
 var unzoomedFieldOfView : float;
+var velocityAlpha : float;
 var zoomedFieldOfView : float;
 
 private var controller : CharacterController;
