@@ -190,6 +190,10 @@ function FixedUpdate () {
     }
   }
   head.rotation = headOrientation;
+  // Audio
+  if (Input.GetButton("Jump") && !mainCamera.GetComponent(AudioSource).isPlaying) {
+    mainCamera.GetComponent(AudioSource).Play();
+  }
 }
 
 //IVZ TEST
