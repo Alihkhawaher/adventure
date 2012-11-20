@@ -79,8 +79,8 @@ function OnGUI() {
   // If the player has moved the stick out of the dead zone:
   if (Vector2.Distance(pointer, Vector2.zero) > 0.05) {
     // Draw a unicode symbol as a crosshair.
-    GUI.Label(new Rect(Screen.width / 2.0 * (1 + pointer.x),
-        Screen.height / 2.0 * (1 + pointer.y), 50, 50), "◎", style);
+    //GUI.Label(new Rect(Screen.width / 2.0 * (1 + pointer.x),
+        //Screen.height / 2.0 * (1 + pointer.y), 50, 50), "◎", style);
   }
 }
 
