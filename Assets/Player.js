@@ -96,7 +96,7 @@ function FixedUpdate () {
         mainCamera.transform.position.y + adultHeight;
   }
   correction = Vector3.Lerp(correction, newCorrection, cameraAlpha);
-  mainCamera.transform.position += correction;
+  //mainCamera.transform.position += correction;
   var dr : Vector3 = Input.GetAxis('Horizontal') * mainCamera.transform.right;
   var df : Vector3 = Input.GetAxis('Vertical') * directionToPlayer.normalized;
   var newVelocity : Vector3 = speed * Vector3.ClampMagnitude(dr + df, 1);
