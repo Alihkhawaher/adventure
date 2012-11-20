@@ -24,6 +24,8 @@ var toyMonkey : Transform;
 var unzoomedFieldOfView : float;
 var velocityAlpha : float;
 var zoomedFieldOfView : float;
+var rainbowSound : AudioClip;
+var squeaker : Collider;
 
 private var controller : CharacterController;
 private var correction : Vector3;
@@ -185,6 +187,13 @@ function FixedUpdate () {
   // Audio
   if (Input.GetButton("Jump") && !mainCamera.GetComponent(AudioSource).isPlaying) {
     mainCamera.GetComponent(AudioSource).Play();
+  }
+  // idle noise
+  if (Physics.Raycast(mainCamera.transform.position, (transform.position - mainCamera.transform.position).normalized, hit)
+    && hit.collider != squeaker
+    && !GetComponent(AudioSource).isPlaying) {
+    GetComponent(AudioSource).clip = rainbowSound;
+    GetComponent(AudioSource).Play();
   }
 }
 
