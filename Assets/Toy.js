@@ -11,6 +11,6 @@ function Update () {
 function OnCollisionEnter(collision : Collision) {
   if (collision.gameObject.name == "Toybox") {
     collision.gameObject.GetComponent(AudioSource).Play();
-    GameObject.Destroy(gameObject);
+    transform.position.y -= 1000.0;
   }
 }
