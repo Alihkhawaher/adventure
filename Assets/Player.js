@@ -7,6 +7,8 @@ var alpha : float;
 var angle : float;
 var cameraAlpha : float;
 var center : Transform;
+var creepySound : AudioClip;
+var creepySoundDelay : float;
 var childLookDistance : float;
 var minCameraDistance : float;
 var hCameraRotationMultiplier : float;
@@ -31,6 +33,8 @@ private var headOrientation : Quaternion;
 private var velocity : Vector3;
 private var pointer : Vector2;
 private var toys : Array;
+private var stareTimestamp : float;
+private var staring : boolean;
 
 #if UNITY_STANDALONE_WIN
 private static var HORIZONTAL_HAT : String = 'HorizontalHatXbox360';
@@ -53,6 +57,8 @@ function Start () {
   velocity = Vector3.zero;
   pointer = Vector2.zero;
   toys = [toyBuddha, toyBunny, toyDragon, toyMonkey];
+  stareTimestamp = 0;
+  staring = false;
 }
 
 function OnGUI() {
@@ -96,7 +102,6 @@ function FixedUpdate () {
         mainCamera.transform.position.y + adultHeight;
   }
   correction = Vector3.Lerp(correction, newCorrection, cameraAlpha);
-  //mainCamera.transform.position += correction;
   var dr : Vector3 = Input.GetAxis('Horizontal') * mainCamera.transform.right;
   var df : Vector3 = Input.GetAxis('Vertical') * directionToPlayer.normalized;
   var newVelocity : Vector3 = speed * Vector3.ClampMagnitude(dr + df, 1);
@@ -124,30 +129,7 @@ function FixedUpdate () {
   var cachedHeadRotation : Quaternion;
   var dir : Vector3;
   var newDir : Vector3;
-  // If player is looking around:
-  if (Vector2.Distance(pointer, Vector2.zero) > 0.05) {
-    var point : Vector2 = Vector2.Scale(
-        new Vector2(Screen.width, -Screen.height) / 2.0,
-        new Vector2(1.0, -1.0) + new Vector2(
-      Input.GetAxis(HORIZONTAL_HAT), Input.GetAxis(VERTICAL_HAT)));
-    var ray : Ray = mainCamera.ScreenPointToRay(point);
-    if (Physics.Raycast(ray, hit)) {
-      center.position = hit.point;
-    } else {
-      center.position = ray.GetPoint(1000.0);
-    }
-    cachedHeadRotation = head.rotation;
-    if (Vector3.Dot(transform.forward, center.position - head.position) < 0.0) {
-      dir = center.position - head.position;
-      newDir = dir - Vector3.Dot(dir, transform.forward) /
-          Vector3.Dot(transform.forward, transform.forward) * transform.forward;
-      center.position = head.position + newDir;
-    }
-    head.LookAt(center);
-    headOrientation = Quaternion.Lerp(headOrientation,
-        head.rotation, cameraAlpha);
-    head.rotation = cachedHeadRotation;
-  } else if (Vector3.Distance(
+  if (Vector3.Distance(
       mainCamera.transform.position, transform.position) < childLookDistance
       && Vector3.Dot(mainCamera.transform.forward, transform.forward) < 0.0) {
     // If avatar is facing camera:
@@ -156,7 +138,12 @@ function FixedUpdate () {
     headOrientation = Quaternion.Lerp(
         headOrientation, head.rotation, cameraAlpha);
     head.rotation = cachedHeadRotation;
+    if (!staring) {
+      stareTimestamp = Time.fixedTime;
+      staring = true;
+    }
   } else {
+    staring = false;
     // If closest toy is within 5 meters:
     var closestToy : Transform = null;
     var closestDistance : float = Mathf.Infinity;
@@ -188,6 +175,11 @@ function FixedUpdate () {
           headOrientation, Quaternion.FromToRotation(
               Vector3.forward, velocity), cameraAlpha);
     }
+  }
+  if (staring && Time.fixedTime - stareTimestamp > creepySoundDelay &&
+    !GetComponent(AudioSource).isPlaying) {
+    GetComponent(AudioSource).clip = creepySound;
+    GetComponent(AudioSource).Play();
   }
   head.rotation = headOrientation;
   // Audio
