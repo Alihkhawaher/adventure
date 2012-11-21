@@ -174,8 +174,7 @@ function FixedUpdate () {
       head.rotation = cachedHeadRotation;
     } else {
       headOrientation = Quaternion.Lerp(
-          headOrientation, Quaternion.FromToRotation(
-              Vector3.forward, velocity), cameraAlpha);
+          headOrientation, transform.rotation, cameraAlpha);
     }
   }
   if (staring && Time.fixedTime - stareTimestamp > creepySoundDelay &&
